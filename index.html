@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>恋爱压力指数 · Relationship Pressure Index</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#0b0b10;
+    --card:rgba(255,255,255,.065);
+    --border:rgba(255,255,255,.12);
+    --text:#f6f3f1;
+    --sub:#aaa5a8;
+    --accent:#e8b9b8;
+    --accent2:#b99bd5;
+}
+
+body{
+    min-height:100vh;
+    color:var(--text);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+    background:
+        radial-gradient(circle at 15% 15%,rgba(201,157,182,.18),transparent 30%),
+        radial-gradient(circle at 85% 80%,rgba(117,91,151,.18),transparent 32%),
+        linear-gradient(135deg,#09090d,#121118 55%,#09090d);
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-size:45px 45px;
+    mask-image:linear-gradient(to bottom,black,transparent);
+}
+
+.page{
+    width:100%;
+    min-height:100vh;
+    display:none;
+    padding:30px 18px 50px;
+}
+
+.page.active{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.container{
+    width:100%;
+    max-width:720px;
+}
+
+.logo{
+    font-size:11px;
+    letter-spacing:4px;
+    color:#aaa;
+    margin-bottom:45px;
+    text-transform:uppercase;
+}
+
+.login{
+    min-height:100vh;
+    justify-content:center;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.hero .small{
+    color:var(--accent);
+    letter-spacing:5px;
+    font-size:11px;
+    margin-bottom:18px;
+}
+
+.hero h1{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(40px,10vw,70px);
+    font-weight:400;
+    letter-spacing:3px;
+    line-height:1.1;
+    margin-bottom:18px;
+}
+
+.hero p{
+    color:#aaa;
+    font-size:14px;
+    line-height:2;
+}
+
+.login-card{
+    background:rgba(255,255,255,.055);
+    border:1px solid var(--border);
+    backdrop-filter:blur(20px);
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 25px 80px rgba(0,0,0,.35);
+}
+
+.label{
+    font-size:11px;
+    letter-spacing:2px;
+    color:#999;
+    margin-bottom:12px;
+}
+
+input{
+    width:100%;
+    height:56px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.25);
+    color:white;
+    text-align:center;
+    font-size:20px;
+    letter-spacing:8px;
+    outline:none;
+    transition:.3s;
+}
+
+input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 25px rgba(232,185,184,.1);
+}
+
+button{
+    width:100%;
+    height:54px;
+    margin-top:15px;
+    border:0;
+    border-radius:14px;
+    cursor:pointer;
+    color:#181318;
+    background:linear-gradient(135deg,#f0ceca,#cdb1dc);
+    font-size:15px;
+    letter-spacing:2px;
+    font-weight:600;
+    transition:.25s;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+.error{
+    height:20px;
+    text-align:center;
+    color:#d99494;
+    font-size:12px;
+    margin-top:12px;
+}
+
+.notice{
+    text-align:center;
+    margin-top:20px;
+    color:#777;
+    font-size:11px;
+    line-height:1.8;
+}
+
+.topbar{
+    width:100%;
+    max-width:720px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
+
+.progress-text{
+    font-size:11px;
+    color:#888;
+    letter-spacing:2px;
+}
+
+.progress{
+    width:180px;
+    height:3px;
+    background:rgba(255,255,255,.1);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-inner{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#d9aaa9,#c8a7d9);
+    transition:.4s;
+}
+
+.question-number{
+    color:var(--accent);
+    font-size:12px;
+    letter-spacing:3px;
+    margin-bottom:20px;
+}
+
+.question{
+    font-family:Georgia,"Songti SC","STSong",serif;
+    font-size:clamp(26px,6vw,40px);
+    line-height:1.45;
+    font-weight:400;
+    margin-bottom:35px;
+}
+
+.options{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.option{
+    position:relative;
+    min-height:64px;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.045);
+    border-radius:16px;
+    color:#d4d0d2;
+    font-size:14px;
+    line-height:1.6;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.option:hover{
+    background:rgba(255,255,255,.08);
+    border-color:rgba(232,185,184,.45);
+}
+
+.option.selected{
+    background:rgba(232,185,184,.12);
+    border-color:var(--accent);
+    color:#fff;
+}
+
+.option .dot{
+    width:10px;
+    height:10px;
+    border:1px solid #777;
+    border-radius:50%;
+    margin-right:14px;
+    flex-shrink:0;
+}
+
+.option.selected .dot{
+    border-color:var(--accent);
+    background:var(--accent);
+    box-shadow:0 0 12px rgba(232,185,184,.5);
+}
+
+.next{
+    margin-top:25px;
+}
+
+.next:disabled{
+    opacity:.3;
+    cursor:not-allowed;
+}
+
+/* result */
+
+.result-head{
+    text-align:center;
+    margin:20px 0 35px;
+}
+
+.result-head .eyebrow{
+    color:var(--accent);
+    letter-spacing:4px;
+    font-size:11px;
+    margin-bottom:15px;
+}
+
+.result-head h2{
+    font-family:Georgia,"Songti SC",serif;
+    font-weight:400;
+    font-size:clamp(34px,8vw,54px);
+    margin-bottom:12px;
+}
+
+.result-head p{
+    color:#999;
+    font-size:13px;
+}
+
+.score-card{
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.055);
+    border-radius:28px;
+    padding:35px 25px;
+    text-align:center;
+    margin-bottom:18px;
+}
+
+.score-card::after{
+    content:"";
+    position:absolute;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:rgba(220,170,190,.12);
+    filter:blur(50px);
+    top:-100px;
+    right:-80px;
+}
+
+.score-label{
+    color:#999;
+    font-size:11px;
+    letter-spacing:3px;
+}
+
+.score{
+    position:relative;
+    z-index:1;
+    font-family:Georgia,serif;
+    font-size:92px;
+    line-height:1;
+    margin:15px 0 8px;
+}
+
+.score span{
+    font-size:20px;
+    color:#888;
+}
+
+.level{
+    display:inline-block;
+    padding:8px 18px;
+    border-radius:30px;
+    background:rgba(232,185,184,.1);
+    color:var(--accent);
+    font-size:12px;
+    letter-spacing:2px;
+}
+
+.result-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.card{
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.045);
+    border-radius:22px;
+    padding:23px;
+}
+
+.card.full{
+    margin-bottom:15px;
+}
+
+.card-title{
+    font-size:11px;
+    color:#8f8b8e;
+    letter-spacing:2px;
+    margin-bottom:15px;
+}
+
+.card h3{
+    font-family:Georgia,"Songti SC",serif;
+    font-size:21px;
+    font-weight:400;
+    margin-bottom:12px;
+}
+
+.card p{
+    color:#aaa5a8;
+    font-size:13px;
+    line-height:1.9;
+}
+
+.radar-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:330px;
+}
+
+canvas{
+    max-width:100%;
+}
+
+.source-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.source{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.source-name{
+    width:90px;
+    font-size:12px;
+    color:#aaa;
+}
+
+.source-bar{
+    flex:1;
+    height:6px;
+    background:rgba(255,255,255,.08);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.source-fill{
+    height:100%;
+    border-radius:10px;
+    background:linear-gradient(90deg,#d5aaa9,#c2a7d5);
+}
+
+.source-num{
+    width:30px;
+    text-align:right;
+    color:#ddd;
+    font-size:11px;
+}
+
+.quote{
+    border-left:2px solid var(--accent);
+    padding-left:18px;
+    color:#d8d3d5;
+    font-family:Georgia,"Songti SC",serif;
+    font-size:18px;
+    line-height:1.8;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:20px;
+}
+
+.actions button{
+    margin:0;
+}
+
+.actions .secondary{
+    color:#ddd;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+}
+
+.disclaimer{
+    color:#666;
+    text-align:center;
+    font-size:10px;
+    line-height:1.8;
+    margin-top:25px;
+}
+
+@media(max-width:600px){
+    .page{
+        padding:22px 15px 40px;
+    }
+
+    .login{
+        padding-top:20px;
+    }
+
+    .logo{
+        margin-bottom:35px;
+    }
+
+    .login-card{
+        padding:23px;
+    }
+
+    .topbar{
+        margin-bottom:30px;
+    }
+
+    .progress{
+        width:110px;
+    }
+
+    .question{
+        margin-bottom:25px;
+    }
+
+    .result-grid{
+        grid-template-columns:1fr;
+    }
+
+    .score{
+        font-size:78px;
+    }
+
+    .card{
+        padding:20px;
+    }
+
+    .actions{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 登录页 -->
+<section id="loginPage" class="page login active">
+    <div class="container">
+
+        <div class="logo">PRIVATE TEST · 001</div>
+
+        <div class="hero">
+            <div class="small">RELATIONSHIP PRESSURE</div>
+            <h1>恋爱压力指数</h1>
+            <p>
+                有些压力不是不爱。<br>
+                只是你在一段关系里，承担了太多。
+            </p>
+        </div>
+
+        <div class="login-card">
+
+            <div class="label">请输入提取码</div>
+
+            <input
+                id="password"
+                type="text"
+                inputmode="numeric"
+                maxlength="4"
+                autocomplete="off"
+                placeholder="••••"
+            >
+
+            <button onclick="enterTest()">进入测试</button>
+
+            <div id="error" class="error"></div>
+
+            <div class="notice">
+                本测试仅用于娱乐与自我观察<br>
+                不构成心理或医学诊断
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- 测试页 -->
+<section id="testPage" class="page">
+
+    <div class="topbar">
+        <div class="progress-text">
+            <span id="currentNum">01</span> / 18
+        </div>
+
+        <div class="progress">
+            <div id="progressInner" class="progress-inner"></div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="questionNumber" class="question-number">
+            QUESTION 01
+        </div>
+
+        <div id="questionText" class="question"></div>
+
+        <div id="options" class="options"></div>
+
+        <button id="nextButton" class="next" disabled onclick="nextQuestion()">
+            下一题
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- 结果页 -->
+<section id="resultPage" class="page">
+
+    <div class="container">
+
+        <div class="logo">YOUR RELATIONSHIP MAP</div>
+
+        <div class="result-head">
+            <div class="eyebrow">RESULT · 001</div>
+            <h2 id="resultTitle">你的恋爱压力指数</h2>
+            <p id="resultSubtitle"></p>
+        </div>
+
+        <div class="score-card">
+
+            <div class="score-label">LOVE PRESSURE INDEX</div>
+
+            <div class="score">
+                <span id="score">0</span>
+                <span>/100</span>
+            </div>
+
+            <div id="level" class="level"></div>
+
+        </div>
+
+
+        <div class="result-grid">
+
+            <div class="card">
+                <div class="card-title">PRESSURE PATTERN</div>
+                <h3 id="patternTitle"></h3>
+                <p id="patternText"></p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">YOU MAY NEED</div>
+                <h3 id="needTitle"></h3>
+                <p id="needText"></p>
+            </div>
+
+        </div>
+
+
+        <div class="card full">
+
+            <div class="card-title">10 DIMENSIONS</div>
+
+            <div class="radar-wrap">
+                <canvas id="radar" width="500" height="500"></canvas>
+            </div>
+
+        </div>
+
+
+        <div class="card full">
+
+            <div class="card-title">TOP 3 PRESSURE SOURCES</div>
+
+            <div id="sourceList" class="source-list"></div>
+
+        </div>
+
+
+        <div class="card full">
+
+            <div class="card-title">TRIGGER MOMENTS</div>
+
+            <div id="triggerText" class="quote"></div>
+
+        </div>
+
+
+        <div class="card full">
+
+            <div class="card-title">A MESSAGE FOR YOU</div>
+
+            <h3 id="messageTitle"></h3>
+
+            <p id="messageText"></p>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button onclick="copyResult()">
+                复制测试结果
+            </button>
+
+            <button class="secondary" onclick="restartTest()">
+                再测一次
+            </button>
+
+        </div>
+
+        <div class="disclaimer">
+            本测试结果仅用于娱乐、自我观察与关系反思。<br>
+            分数高低不代表你是否适合恋爱，也不代表关系一定存在问题。
+        </div>
+
+    </div>
+
+</section>
+<script>
+
+/* =========================
+   基础设置
+========================= */
+
+const PASSWORD = "1001";
+
+let currentQuestion = 0;
+let answers = [];
+let selected = null;
+
+
+/* =========================
+   10个维度
+========================= */
+
+const dimensions = [
+    "安全感需求",
+    "回复敏感度",
+    "猜测内耗",
+    "失去恐惧",
+    "付出压力",
+    "边界压力",
+    "冲突压力",
+    "自我牺牲",
+    "情绪依赖",
+    "关系控制感"
+];
+
+
+/* =========================
+   18道题
+========================= */
+
+const questions = [
+
+{
+    text:"当喜欢的人很久没有回复你时，你通常会？",
+    dimension:1,
+    options:[
+        "不会特别在意",
+        "偶尔看一下手机",
+        "开始想是不是发生了什么",
+        "会忍不住反复确认消息"
+    ]
+},
+
+{
+    text:"如果对方突然比平时冷淡，你第一反应是？",
+    dimension:0,
+    options:[
+        "可能只是累了",
+        "会稍微注意",
+        "开始怀疑是不是自己做错了什么",
+        "情绪会明显受到影响"
+    ]
+},
+
+{
+    text:"恋爱中，你会不会经常猜测对方的真实想法？",
+    dimension:2,
+    options:[
+        "几乎不会",
+        "偶尔会",
+        "经常会",
+        "很多时候停不下来"
+    ]
+},
+
+{
+    text:"想到有一天对方可能会离开，你会？",
+    dimension:3,
+    options:[
+        "觉得顺其自然",
+        "偶尔会害怕",
+        "会明显不安",
+        "甚至提前开始难过"
+    ]
+},
+
+{
+    text:"你是否会因为害怕对方不开心，而答应一些自己并不想做的事？",
+    dimension:7,
+    options:[
+        "基本不会",
+        "偶尔会",
+        "比较常见",
+        "经常如此"
+    ]
+},
+
+{
+    text:"对方没有主动找你时，你会主动联系吗？",
+    dimension:1,
+    options:[
+        "想联系就联系",
+        "会等一会儿",
+        "会纠结要不要主动",
+        "会非常在意谁先联系"
+    ]
+},
+
+{
+    text:"发生矛盾之后，你最难受的是什么？",
+    dimension:6,
+    options:[
+        "把事情解决就好",
+        "当下会有些难受",
+        "害怕关系因此改变",
+        "会不断回想整件事"
+    ]
+},
+
+{
+    text:"你会不会为了维持关系，压下自己的真实情绪？",
+    dimension:7,
+    options:[
+        "很少",
+        "偶尔",
+        "比较多",
+        "几乎习惯性这样"
+    ]
+},
+
+{
+    text:"当对方和别人走得比较近时，你会？",
+    dimension:9,
+    options:[
+        "正常相处",
+        "稍微有一点介意",
+        "会产生比较明显的醋意",
+        "会很想知道他们到底是什么关系"
+    ]
+},
+
+{
+    text:"你觉得恋爱中的自己容易过度关注对方吗？",
+    dimension:8,
+    options:[
+        "完全不会",
+        "偶尔会",
+        "有时候会",
+        "经常如此"
+    ]
+},
+
+{
+    text:"如果对方说“我今天想一个人待着”，你会？",
+    dimension:5,
+    options:[
+        "理解并给空间",
+        "虽然失落但会尊重",
+        "会想知道为什么",
+        "很难不去追问"
+    ]
+},
+
+{
+    text:"对方突然取消了原本和你的约会，你会？",
+    dimension:4,
+    options:[
+        "没关系，下次再约",
+        "会有一点失落",
+        "会觉得自己是不是不重要",
+        "会明显怀疑这段关系"
+    ]
+},
+
+{
+    text:"你是否会因为对方一句话，而反复思考很久？",
+    dimension:2,
+    options:[
+        "很少",
+        "偶尔",
+        "比较常见",
+        "非常容易"
+    ]
+},
+
+{
+    text:"如果一天没有见到对方，你的情绪会受到影响吗？",
+    dimension:8,
+    options:[
+        "基本不会",
+        "偶尔会想念",
+        "会明显想念",
+        "容易感觉空落落的"
+    ]
+},
+
+{
+    text:"恋爱中的你，会不会特别害怕自己做得不够好？",
+    dimension:4,
+    options:[
+        "不会",
+        "偶尔",
+        "有时候会",
+        "经常觉得自己需要做得更多"
+    ]
+},
+
+{
+    text:"你是否会希望知道对方正在做什么？",
+    dimension:9,
+    options:[
+        "不太需要",
+        "偶尔问问",
+        "比较希望知道",
+        "不知道会很不安"
+    ]
+},
+
+{
+    text:"当你们发生激烈争吵时，你最容易出现什么情况？",
+    dimension:6,
+    options:[
+        "冷静沟通",
+        "需要一点时间缓一缓",
+        "会非常害怕关系破裂",
+        "情绪会完全被这件事占据"
+    ]
+},
+
+{
+    text:"如果你发现自己在这段关系里越来越累，你会？",
+    dimension:5,
+    options:[
+        "直接沟通",
+        "先自己消化",
+        "担心说出来影响关系",
+        "宁愿委屈自己也不想失去"
+    ]
+}
+
+];
+
+
+/* =========================
+   登录
+========================= */
+
+function enterTest(){
+
+    const value =
+        document.getElementById("password")
+        .value
+        .trim();
+
+    const error =
+        document.getElementById("error");
+
+    if(value === PASSWORD){
+
+        error.innerText = "";
+
+        document
+            .getElementById("loginPage")
+            .classList.remove("active");
+
+        document
+            .getElementById("testPage")
+            .classList.add("active");
+
+        loadQuestion();
+
+    }else{
+
+        error.innerText = "提取码错误，请重新输入";
+
+    }
+}
+
+
+document
+.getElementById("password")
+.addEventListener("keydown",function(e){
+
+    if(e.key === "Enter"){
+        enterTest();
+    }
+
+});
+
+
+/* =========================
+   加载题目
+========================= */
+
+function loadQuestion(){
+
+    const q = questions[currentQuestion];
+
+    selected = null;
+
+    document.getElementById("currentNum")
+        .innerText =
+        String(currentQuestion + 1)
+        .padStart(2,"0");
+
+    document.getElementById("questionNumber")
+        .innerText =
+        "QUESTION " +
+        String(currentQuestion + 1)
+        .padStart(2,"0");
+
+    document.getElementById("questionText")
+        .innerText = q.text;
+
+    const options =
+        document.getElementById("options");
+
+    options.innerHTML = "";
+
+    q.options.forEach((option,index)=>{
+
+        const div =
+            document.createElement("div");
+
+        div.className = "option";
+
+        div.innerHTML =
+            `<span class="dot"></span>${option}`;
+
+        div.onclick = ()=>selectOption(index,div);
+
+        options.appendChild(div);
+
+    });
+
+    document.getElementById("nextButton")
+        .disabled = true;
+
+    document.getElementById("progressInner")
+        .style.width =
+        ((currentQuestion) / questions.length * 100) + "%";
+}
+
+
+/* =========================
+   选择答案
+========================= */
+
+function selectOption(index,element){
+
+    selected = index;
+
+    document
+        .querySelectorAll(".option")
+        .forEach(el=>{
+            el.classList.remove("selected");
+        });
+
+    element.classList.add("selected");
+
+    document.getElementById("nextButton")
+        .disabled = false;
+}
+
+
+/* =========================
+   下一题
+========================= */
+
+function nextQuestion(){
+
+    if(selected === null) return;
+
+    answers[currentQuestion] = selected + 1;
+
+    currentQuestion++;
+
+    if(currentQuestion >= questions.length){
+
+        showResult();
+
+    }else{
+
+        loadQuestion();
+
+    }
+}
+
+
+/* =========================
+   计算结果
+========================= */
+
+function calculate(){
+
+    const scores =
+        new Array(10).fill(0);
+
+    const counts =
+        new Array(10).fill(0);
+
+    questions.forEach((q,i)=>{
+
+        const value = answers[i] || 1;
+
+        scores[q.dimension] += value;
+
+        counts[q.dimension]++;
+
+    });
+
+    const dimensionsScore =
+        scores.map((value,i)=>{
+
+            const max = counts[i] * 4;
+
+            return Math.round(value / max * 100);
+
+        });
+
+    const total =
+        dimensionsScore.reduce((a,b)=>a+b,0);
+
+    const overall =
+        Math.round(total / 10);
+
+    return {
+        dimensionsScore,
+        overall
+    };
+}
+
+
+/* =========================
+   结果文字
+========================= */
+
+function getResult(score){
+
+    if(score <= 25){
+
+        return {
+
+            level:"低压恋爱型",
+
+            title:"你在爱里，仍然保留着自己",
+
+            subtitle:"你愿意亲近一个人，也允许彼此拥有自己的空间。",
+
+            patternTitle:"稳定型关系感",
+
+            patternText:
+            "你通常不会因为对方的一次沉默、一条晚回的消息，就立刻否定整段关系。你能够喜欢一个人，但不会轻易把自己的全部情绪交给对方。",
+
+            needTitle:"被尊重",
+
+            needText:
+            "你真正需要的并不是时时刻刻的确认，而是一段能够让你舒服做自己的关系。",
+
+            trigger:
+            "真正容易让你产生压力的，往往不是距离，而是对方突然改变了原本的相处方式。",
+
+            messageTitle:"保持你的边界感",
+
+            messageText:
+            "会爱人，也会爱自己，是一种很珍贵的能力。"
+
+        };
+
+    }
+
+    if(score <= 40){
+
+        return {
+
+            level:"轻度敏感型",
+
+            title:"你会在意，但还没有失去自己",
+
+            subtitle:"你对关系有期待，也会偶尔因为细节产生波动。",
+
+            patternTitle:"细节雷达型",
+
+            patternText:
+            "你会注意对方语气的变化，也会观察一些平时容易被忽略的小细节。但大多数时候，你仍然能够把情绪拉回来。",
+
+            needTitle:"确定感",
+
+            needText:
+            "一句明确的话，一个稳定的回应，往往就足够让你安心。",
+
+            trigger:
+            "最容易触发你的，是那些没有解释的突然冷淡，以及让你无法判断自己位置的模糊态度。",
+
+            messageTitle:"别把所有细节都变成答案",
+
+            messageText:
+            "不是每一次晚回、沉默和语气变化，都藏着一个关于你的坏消息。"
+
+        };
+
+    }
+
+    if(score <= 55){
+
+        return {
+
+            level:"安全感需求型",
+
+            title:"你不是黏人，你只是很需要确定",
+
+            subtitle:"当关系进入模糊区域，你的情绪会明显变得敏感。",
+
+            patternTitle:"确定感依赖型",
+
+            patternText:
+            "你对喜欢的人投入很深，所以一旦对方的态度出现变化，你会下意识寻找原因。你需要知道自己被爱，也需要知道这段关系正在往哪里走。",
+
+            needTitle:"明确回应",
+
+            needText:
+            "比起轰轰烈烈，你更需要稳定、坦诚和说到做到。",
+
+            trigger:
+            "已读不回、忽冷忽热、突然减少联系，以及一句没有解释的话，都可能让你的情绪迅速升温。",
+
+            messageTitle:"你可以要求确定",
+
+            messageText:
+            "安全感不是矫情。健康的关系，本来就应该允许两个人表达自己的需要。"
+
+        };
+
+    }
+
+    if(score <= 70){
+
+        return {
+
+            level:"高敏感恋爱型",
+
+            title:"你很会爱，也很容易累",
+
+            subtitle:"你对关系的感知很细，所以很多别人忽略的东西，你都会感觉到。",
+
+            patternTitle:"高敏感内耗型",
+
+            patternText:
+            "你很容易察觉对方情绪的细微变化，也会提前考虑关系可能出现的问题。你的认真让你很会照顾别人，但也容易让自己承担过多情绪。",
+
+            needTitle:"稳定与边界",
+
+            needText:
+            "你需要的不是更多猜测，而是更清楚的沟通，以及允许自己说“不”的空间。",
+
+            trigger:
+            "最容易让你崩掉的不是争吵本身，而是争吵之后的沉默、冷处理，以及不知道关系会不会继续。",
+
+            messageTitle:"别总是先照顾对方",
+
+            messageText:
+            "你也可以被照顾。你不需要通过不断付出来证明自己值得被爱。"
+
+        };
+
+    }
+
+    if(score <= 85){
+
+        return {
+
+            level:"情绪透支型",
+
+            title:"你可能已经爱得太用力了",
+
+            subtitle:"这段关系占用了你很多情绪，也可能正在影响你的生活状态。",
+
+            patternTitle:"过度投入型",
+
+            patternText:
+            "你会把很多注意力放在关系上：对方的一句话、一次沉默、一个动作，都可能在你的脑海里反复播放。你很想把关系经营好，却容易忘记自己的感受。",
+
+            needTitle:"喘息空间",
+
+            needText:
+            "你真正需要的可能不是对方再多爱一点，而是重新找回属于自己的生活。",
+
+            trigger:
+            "当你发现自己开始反复查看手机、揣测语气、害怕冲突、害怕失去时，你的压力往往已经积累了一段时间。",
+
+            messageTitle:"先把自己放回来",
+
+            messageText:
+            "爱一个人，不意味着要二十四小时守着这段关系。你依然应该拥有自己的朋友、兴趣、工作和安静时间。"
+
+        };
+
+    }
+
+    return {
+
+        level:"高压恋爱型",
+
+        title:"这段关系可能已经占据了太多你的情绪",
+
+        subtitle:"你的压力更多来自害怕失去、过度猜测和持续的不确定感。",
+
+        patternTitle:"高压依恋型",
+
+        patternText:
+        "你可能已经习惯通过对方的回应来判断自己是否被爱。关系稍微出现变化，你的情绪就会迅速跟着变化。长时间处于这种状态，很容易让人疲惫。",
+
+        needTitle:"安全感与自我空间",
+
+        needText:
+        "你需要重新建立自己的生活支点，让自己的情绪不再只依附于一段关系。",
+
+        trigger:
+        "忽冷忽热、长时间失联、关系模糊、冲突后的冷处理，以及任何让你感觉自己可能被抛下的瞬间。",
+
+        messageTitle:"你值得一段不用一直猜的关系",
+
+        messageText:
+        "真正稳定的爱，不应该让你每天都在证明自己有没有被爱。"
+
+    };
+
+}
+
+
+/* =========================
+   显示结果
+========================= */
+
+function showResult(){
+
+    const result =
+        calculate();
+
+    const info =
+        getResult(result.overall);
+
+    document
+        .getElementById("testPage")
+        .classList.remove("active");
+
+    document
+        .getElementById("resultPage")
+        .classList.add("active");
+
+    document.getElementById("score")
+        .innerText = result.overall;
+
+    document.getElementById("level")
+        .innerText = info.level;
+
+    document.getElementById("resultTitle")
+        .innerText = info.title;
+
+    document.getElementById("resultSubtitle")
+        .innerText = info.subtitle;
+
+    document.getElementById("patternTitle")
+        .innerText = info.patternTitle;
+
+    document.getElementById("patternText")
+        .innerText = info.patternText;
+
+    document.getElementById("needTitle")
+        .innerText = info.needTitle;
+
+    document.getElementById("needText")
+        .innerText = info.needText;
+
+    document.getElementById("triggerText")
+        .innerText = info.trigger;
+
+    document.getElementById("messageTitle")
+        .innerText = info.messageTitle;
+
+    document.getElementById("messageText")
+        .innerText = info.messageText;
+
+    drawRadar(result.dimensionsScore);
+
+    showTopSources(result.dimensionsScore);
+
+}
+
+
+/* =========================
+   Top 3压力来源
+========================= */
+
+function showTopSources(scores){
+
+    const arr =
+        scores.map((score,index)=>({
+            name:dimensions[index],
+            score
+        }))
+        .sort((a,b)=>b.score-a.score)
+        .slice(0,3);
+
+    const box =
+        document.getElementById("sourceList");
+
+    box.innerHTML = "";
+
+    arr.forEach(item=>{
+
+        box.innerHTML += `
+
+        <div class="source">
+
+            <div class="source-name">
+                ${item.name}
+            </div>
+
+            <div class="source-bar">
+                <div
+                    class="source-fill"
+                    style="width:${item.score}%">
+                </div>
+            </div>
+
+            <div class="source-num">
+                ${item.score}
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+/* =========================
+   雷达图
+========================= */
+
+function drawRadar(values){
+
+    const canvas =
+        document.getElementById("radar");
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0,0,w,h);
+
+    const cx = w/2;
+    const cy = h/2;
+    const radius = 165;
+
+    const count = 10;
+
+    function point(i,r){
+
+        const angle =
+            -Math.PI/2 +
+            i * Math.PI*2/count;
+
+        return {
+
+            x:cx + Math.cos(angle)*r,
+
+            y:cy + Math.sin(angle)*r
+
+        };
+
+    }
+
+    /* 网格 */
+
+    for(let level=1;level<=5;level++){
+
+        const r =
+            radius * level/5;
+
+        ctx.beginPath();
+
+        for(let i=0;i<count;i++){
+
+            const p =
+                point(i,r);
+
+            if(i===0)
+                ctx.moveTo(p.x,p.y);
+            else
+                ctx.lineTo(p.x,p.y);
+
+        }
+
+        ctx.closePath();
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,.08)";
+
+        ctx.stroke();
+
+    }
+
+    /* 放射线 */
+
+    for(let i=0;i<count;i++){
+
+        const p =
+            point(i,radius);
+
+        ctx.beginPath();
+
+        ctx.moveTo(cx,cy);
+
+        ctx.lineTo(p.x,p.y);
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,.07)";
+
+        ctx.stroke();
+
+    }
+
+    /* 数据 */
+
+    ctx.beginPath();
+
+    values.forEach((value,i)=>{
+
+        const p =
+            point(i,radius*value/100);
+
+        if(i===0)
+            ctx.moveTo(p.x,p.y);
+        else
+            ctx.lineTo(p.x,p.y);
+
+    });
+
+    ctx.closePath();
+
+    ctx.fillStyle =
+        "rgba(225,180,190,.18)";
+
+    ctx.fill();
+
+    ctx.strokeStyle =
+        "#d9b0b4";
+
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
+
+    /* 节点 */
+
+    values.forEach((value,i)=>{
+
+        const p =
+            point(i,radius*value/100);
+
+        ctx.beginPath();
+
+        ctx.arc(p.x,p.y,4,0,Math.PI*2);
+
+        ctx.fillStyle="#e4babb";
+
+        ctx.fill();
+
+    });
+
+    /* 文字 */
+
+    ctx.font =
+        "12px -apple-system,BlinkMacSystemFont,'PingFang SC'";
+
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    values.forEach((value,i)=>{
+
+        const p =
+            point(i,radius+28);
+
+        ctx.fillStyle =
+            "#aaa";
+
+        ctx.fillText(
+            dimensions[i],
+            p.x,
+            p.y
+        );
+
+    });
+
+}
+
+
+/* =========================
+   复制结果
+========================= */
+
+function copyResult(){
+
+    const score =
+        document.getElementById("score").innerText;
+
+    const level =
+        document.getElementById("level").innerText;
+
+    const title =
+        document.getElementById("resultTitle").innerText;
+
+    const pattern =
+        document.getElementById("patternTitle").innerText;
+
+    const text =
+`恋爱压力指数测试
+
+我的恋爱压力指数：${score}/100
+结果：${level}
+
+${title}
+
+压力模式：${pattern}
+
+——
+恋爱压力指数测试
+仅用于娱乐与自我观察`;
+
+    if(navigator.clipboard){
+
+        navigator.clipboard.writeText(text)
+        .then(()=>{
+            alert("测试结果已复制");
+        })
+        .catch(()=>{
+            fallbackCopy(text);
+        });
+
+    }else{
+
+        fallbackCopy(text);
+
+    }
+
+}
+
+
+function fallbackCopy(text){
+
+    const textarea =
+        document.createElement("textarea");
+
+    textarea.value=text;
+
+    document.body.appendChild(textarea);
+
+    textarea.select();
+
+    document.execCommand("copy");
+
+    textarea.remove();
+
+    alert("测试结果已复制");
+
+}
+
+
+/* =========================
+   重新测试
+========================= */
+
+function restartTest(){
+
+    currentQuestion = 0;
+
+    answers = [];
+
+    selected = null;
+
+    document
+        .getElementById("resultPage")
+        .classList.remove("active");
+
+    document
+        .getElementById("testPage")
+        .classList.add("active");
+
+    loadQuestion();
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+</script>
+
+</body>
+</html>
